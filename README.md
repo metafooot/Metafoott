@@ -1,6 +1,3 @@
-# Metafoott
-An offline‑first football metaverse. Collect daily points, train your virtual player, and compete for rewards. No servers, no accounts – just a personal backup key that keeps your progress safe.
-
 # ⚽ METAFOOT — The Offline‑First Football Metaverse
 
 > **A football universe where you truly own your progress. Earn points, train your player, compete in leagues, and connect with fans – all without servers or accounts controlled by anyone else. Just you and your personal backup key.**
