@@ -37,9 +37,9 @@ The total number of FOOT points that can ever exist is permanently fixed at **50
 
 | Allocation | % of Total | Amount | Purpose |
 |------------|-------------|--------|---------|
-| Daily Rewards (Early Access) | 10% | 50,000,000 | Distributed daily to the earliest community members |
-| Pre‑sale (coming soon) | 25% | 150,000,000 | Early community funding |
-| Development Team | 15% | 200,000,000 | Locked for 2–4 years with a 6‑month delay
+| Daily Rewards (Early Access) | 30% | 150,000,000 | Distributed daily to the earliest community members |
+| Pre‑sale (coming soon) | 30% | 150,000,000 | Early community funding |
+| Team, liquidity, staking, development, the ecosystem | 40% | 200,000,000 |
 
 ### Where FOOT Points Get Their Value
 
