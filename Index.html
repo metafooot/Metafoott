@@ -1,0 +1,564 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <title>METAFOOT — The Magazine</title>
+  <link href="https://fonts.googleapis.com/css2?family=Oswald:wght@400;600;700&family=Inter:wght@300;400;600;800&family=Playfair+Display:ital,wght@0,700;1,700&display=swap" rel="stylesheet">
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body {
+      background: #0a0a0f;
+      color: #f0e6e6;
+      font-family: 'Inter', sans-serif;
+      overflow-x: hidden;
+    }
+    ::-webkit-scrollbar { width: 6px; }
+    ::-webkit-scrollbar-track { background: #0a0a0f; }
+    ::-webkit-scrollbar-thumb { background: #ff3333; border-radius: 10px; }
+
+    .mag-header {
+      position: fixed;
+      top: 0; left: 0; width: 100%;
+      padding: 0.8rem 2rem;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      z-index: 100;
+      background: rgba(10,10,15,0.75);
+      backdrop-filter: blur(12px);
+      border-bottom: 2px solid rgba(255,50,50,0.3);
+      transition: 0.3s;
+    }
+    .mag-header .logo {
+      font-family: 'Oswald', sans-serif;
+      font-weight: 700;
+      font-size: 1.6rem;
+      letter-spacing: 3px;
+      background: linear-gradient(135deg, #ffffff, #ff8888);
+      -webkit-background-clip: text;
+      background-clip: text;
+      color: transparent;
+    }
+    .mag-header .issue {
+      font-size: 0.75rem;
+      color: #ff8888;
+      letter-spacing: 2px;
+      border: 1px solid #ff5555;
+      padding: 0.3rem 1rem;
+      border-radius: 40px;
+    }
+    .mag-header .issue span { color: #ffd700; }
+
+    .cover {
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      text-align: center;
+      padding: 2rem;
+      position: relative;
+      background: radial-gradient(circle at 30% 40%, #1a0a0a, #000000);
+      margin-top: 60px;
+      overflow: hidden;
+    }
+    .cover::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background: 
+        repeating-linear-gradient(45deg, transparent, transparent 40px, rgba(255,50,50,0.02) 40px, rgba(255,50,50,0.02) 41px),
+        radial-gradient(circle at 70% 80%, rgba(255,0,0,0.15), transparent 50%);
+      z-index: 0;
+    }
+    .cover * { position: relative; z-index: 1; }
+    .cover .badge {
+      font-size: 0.8rem;
+      letter-spacing: 6px;
+      color: #ff8888;
+      border: 1px solid #ff5555;
+      padding: 0.4rem 1.6rem;
+      border-radius: 60px;
+      margin-bottom: 2rem;
+      animation: pulseBorder 2s infinite;
+    }
+    @keyframes pulseBorder {
+      0% { box-shadow: 0 0 0 0 rgba(255,50,50,0.2); }
+      70% { box-shadow: 0 0 20px 5px rgba(255,50,50,0); }
+      100% { box-shadow: 0 0 0 0 rgba(255,50,50,0); }
+    }
+    .cover h1 {
+      font-family: 'Playfair Display', serif;
+      font-size: clamp(3.5rem, 14vw, 8rem);
+      font-weight: 700;
+      font-style: italic;
+      background: linear-gradient(135deg, #ffffff 30%, #ff6666 70%, #ffd700);
+      -webkit-background-clip: text;
+      background-clip: text;
+      color: transparent;
+      line-height: 1;
+      animation: glowPulse 3s ease-in-out infinite alternate;
+    }
+    @keyframes glowPulse {
+      0% { filter: drop-shadow(0 0 20px rgba(255,50,50,0.2)); }
+      100% { filter: drop-shadow(0 0 50px rgba(255,50,50,0.6)); }
+    }
+    .cover .sub {
+      font-size: clamp(1rem, 2.5vw, 1.8rem);
+      font-weight: 300;
+      color: #ffbbbb;
+      margin-top: 1rem;
+      letter-spacing: 4px;
+    }
+    .cover .meta {
+      margin-top: 3rem;
+      display: flex;
+      gap: 3rem;
+      font-size: 0.8rem;
+      color: #ffaaaa;
+    }
+    .cover .meta span { border-right: 1px solid #ff5555; padding-right: 2rem; }
+    .cover .meta span:last-child { border: none; }
+    .cover .scroll-indicator {
+      margin-top: 4rem;
+      animation: bounceDown 1.8s infinite;
+      color: #ff5555;
+      font-size: 1.8rem;
+    }
+    @keyframes bounceDown {
+      0%,100% { transform: translateY(0); opacity: 0.5; }
+      50% { transform: translateY(12px); opacity: 1; }
+    }
+
+    .toc {
+      max-width: 1200px;
+      margin: 4rem auto;
+      padding: 0 2rem;
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+      gap: 1.5rem;
+    }
+    .toc-item {
+      background: rgba(20,10,10,0.6);
+      border: 1px solid rgba(255,50,50,0.2);
+      border-radius: 1.5rem;
+      padding: 1.2rem 0.8rem;
+      text-align: center;
+      transition: 0.3s;
+      cursor: pointer;
+      backdrop-filter: blur(4px);
+    }
+    .toc-item:hover {
+      transform: translateY(-6px);
+      border-color: #ff5555;
+      box-shadow: 0 8px 30px rgba(255,50,50,0.2);
+    }
+    .toc-item .num {
+      font-family: 'Playfair Display', serif;
+      font-size: 2rem;
+      font-weight: 700;
+      color: #ff5555;
+      opacity: 0.6;
+    }
+    .toc-item h3 {
+      font-family: 'Oswald', sans-serif;
+      font-size: 0.95rem;
+      margin: 0.4rem 0;
+      color: #ffffff;
+    }
+    .toc-item p {
+      font-size: 0.65rem;
+      color: #ffbbbb;
+    }
+
+    .spread {
+      max-width: 1100px;
+      margin: 0 auto 6rem auto;
+      padding: 0 2rem;
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 3rem;
+      opacity: 0;
+      transform: translateY(60px);
+      transition: opacity 0.9s ease, transform 0.9s ease;
+    }
+    .spread.visible {
+      opacity: 1;
+      transform: translateY(0);
+    }
+    .spread .left { display: flex; flex-direction: column; justify-content: center; }
+    .spread .right { display: flex; flex-direction: column; justify-content: center; }
+    .spread .label {
+      font-family: 'Oswald', sans-serif;
+      font-size: 0.8rem;
+      letter-spacing: 4px;
+      color: #ff5555;
+      border-bottom: 2px solid #ff5555;
+      padding-bottom: 0.3rem;
+      display: inline-block;
+      margin-bottom: 0.8rem;
+    }
+    .spread h2 {
+      font-family: 'Playfair Display', serif;
+      font-size: clamp(1.8rem, 4vw, 3.2rem);
+      font-weight: 700;
+      line-height: 1.2;
+      margin-bottom: 0.8rem;
+    }
+    .spread h2 .highlight { color: #ffd700; }
+    .spread p {
+      font-size: 0.9rem;
+      line-height: 1.7;
+      color: #ddcccc;
+      margin-bottom: 0.8rem;
+    }
+    .spread ul {
+      color: #ddcccc;
+      line-height: 1.8;
+      margin-left: 1.2rem;
+      list-style-type: none;
+    }
+    .spread ul li { margin-bottom: 0.6rem; }
+    .spread ul li strong { color: #ffd700; }
+    .spread .stat-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 1rem;
+      margin: 1.5rem 0;
+    }
+    .spread .stat {
+      background: rgba(255,50,50,0.08);
+      border: 1px solid rgba(255,50,50,0.15);
+      border-radius: 1rem;
+      padding: 1rem;
+      text-align: center;
+    }
+    .spread .stat .number {
+      font-family: 'Oswald', sans-serif;
+      font-size: 2rem;
+      color: #ffd700;
+    }
+    .spread .stat .desc { font-size: 0.7rem; color: #ffbbbb; }
+    .spread .image-placeholder {
+      background: radial-gradient(circle at 30% 40%, #1f1111, #0a0505);
+      border-radius: 2rem;
+      min-height: 260px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      border: 1px solid rgba(255,50,50,0.2);
+      font-size: 4rem;
+      color: rgba(255,50,50,0.15);
+      position: relative;
+      overflow: hidden;
+    }
+    .spread .image-placeholder::after {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background: repeating-linear-gradient(45deg, transparent, transparent 20px, rgba(255,50,50,0.03) 20px, rgba(255,50,50,0.03) 21px);
+    }
+    .spread .image-placeholder i { position: relative; z-index: 1; }
+
+    .spread.full {
+      grid-template-columns: 1fr;
+      gap: 2rem;
+      max-width: 900px;
+    }
+    .spread.full .left { text-align: center; }
+
+    /* ----- EARNING METHODS LIST (stadium) ----- */
+    .earn-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 1rem;
+      margin: 1rem 0;
+    }
+    .earn-item {
+      background: rgba(255,50,50,0.06);
+      border-left: 3px solid #ffd700;
+      padding: 0.8rem 1rem;
+      border-radius: 0.8rem;
+    }
+    .earn-item .title {
+      font-weight: 600;
+      color: #ffd700;
+      font-size: 0.85rem;
+      margin-bottom: 0.2rem;
+    }
+    .earn-item .desc {
+      font-size: 0.8rem;
+      color: #ccbbbb;
+      line-height: 1.4;
+    }
+
+    @media (max-width: 800px) {
+      .spread { grid-template-columns: 1fr; gap: 2rem; }
+      .cover .meta { flex-direction: column; gap: 0.5rem; align-items: center; }
+      .cover .meta span { border: none; padding: 0; }
+      .mag-header { padding: 0.5rem 1rem; }
+      .toc { grid-template-columns: 1fr 1fr; }
+      .earn-grid { grid-template-columns: 1fr; }
+    }
+    @media (max-width: 480px) {
+      .toc { grid-template-columns: 1fr; }
+      .spread .stat-grid { grid-template-columns: 1fr; }
+      .spread .image-placeholder { min-height: 140px; font-size: 2.5rem; }
+    }
+
+    .footer {
+      text-align: center;
+      padding: 3rem 1rem;
+      border-top: 1px solid rgba(255,50,50,0.2);
+      color: #666;
+      font-size: 0.8rem;
+      letter-spacing: 1px;
+    }
+    .footer strong { color: #ff8888; }
+  </style>
+</head>
+<body>
+
+<header class="mag-header">
+  <div class="logo">⚽ METAFOOT</div>
+  <div class="issue">ISSUE #01 <span>·</span> ECOSYSTEM SPECIAL</div>
+</header>
+
+<section class="cover">
+  <div class="badge">⚡ THE METAVERSE OF FOOTBALL</div>
+  <h1>Ecosystem<br>Unleashed</h1>
+  <div class="sub">Where Every Player, Manager &amp; Miner Earns</div>
+  <div class="meta">
+    <span>📍 8 Core Pillars</span>
+    <span>💰 500M $FOOT Supply</span>
+    <span>🏟️ 1,000 Stadiums</span>
+  </div>
+  <div class="scroll-indicator"><i class="fas fa-chevron-down"></i></div>
+</section>
+
+<div class="toc">
+  <div class="toc-item" data-target="vision"><div class="num">01</div><h3>Vision</h3><p>The big picture.</p></div>
+  <div class="toc-item" data-target="stadium"><div class="num">02</div><h3>Stadium</h3><p>How owners earn.</p></div>
+  <div class="toc-item" data-target="rental"><div class="num">03</div><h3>Rental & Earning</h3><p>Passive income, training &amp; transfers.</p></div>
+  <div class="toc-item" data-target="tournaments"><div class="num">04</div><h3>Tournaments</h3><p>4 leagues · Survival to Elite.</p></div>
+  <div class="toc-item" data-target="pvp"><div class="num">05</div><h3>PvP Arena</h3><p>Winner takes all.</p></div>
+  <div class="toc-item" data-target="staking"><div class="num">06</div><h3>Staking</h3><p>Up to 15% APY.</p></div>
+  <div class="toc-item" data-target="card"><div class="num">07</div><h3>Virtual Card</h3><p>Spend in the real world.</p></div>
+  <div class="toc-item" data-target="academy"><div class="num">08</div><h3>Academy & Game</h3><p>Real talent, Unity &amp; Unreal.</p></div>
+</div>
+
+<!-- 1. VISION -->
+<div id="vision" class="spread">
+  <div class="left">
+    <div class="label">⏺ THE BIG PICTURE</div>
+    <h2>The Football Metaverse<br><span class="highlight">Where Everyone Earns</span></h2>
+    <p>METAFOOT is not just a game — it’s a living economy. Miners, players, managers, and renters all have a path to value. Every action, from training your avatar to entering a tournament, creates real opportunities.</p>
+    <div class="stat-grid">
+      <div class="stat"><div class="number">70%</div><div class="desc">of tournament prizes go to players</div></div>
+      <div class="stat"><div class="number">4</div><div class="desc">league tiers from Survival to Elite</div></div>
+    </div>
+    <p>This is the foundation. Below you’ll find every detail of how the ecosystem works – from rental mechanics to the game engine.</p>
+  </div>
+  <div class="right">
+    <div class="image-placeholder"><i class="fas fa-futbol"></i></div>
+  </div>
+</div>
+
+<!-- ============================================================ -->
+<!-- 2. STADIUM – EARNING METHODS (NO BONDING CURVE, NO PERKS) -->
+<div id="stadium" class="spread">
+  <div class="left">
+    <div class="image-placeholder"><i class="fas fa-crown"></i></div>
+  </div>
+  <div class="right">
+    <div class="label">🏟️ INCOME ASSET</div>
+    <h2>METAFOOT Stadium<br><span class="highlight">Multiple Ways to Earn</span></h2>
+    <p>The METAFOOT Stadium is a fixed digital asset – exactly 1,000 exist. It does not rely on bonding curves or speculative pricing. Instead, it functions as a **venue‑based earning vehicle** within the game. Here’s how owners generate $FOOT:</p>
+
+    <div class="earn-grid">
+      <div class="earn-item">
+        <div class="title">🏠 Hosting &amp; Rental Fees</div>
+        <div class="desc">Owners can list their stadium as a venue for PvP matches and tournament finals. Managers pay a hosting fee in $FOOT to use the stadium, creating a steady stream of passive income for the owner.</div>
+      </div>
+      <div class="earn-item">
+        <div class="title">🎟️ Ticket Sales (Spectator Mode)</div>
+        <div class="desc">When the game launches, high‑stakes matches will attract spectators. Owners earn a cut from every virtual ticket sold for matches held in their stadium – a revenue share that scales with the popularity of the event.</div>
+      </div>
+      <div class="earn-item">
+        <div class="title">📢 Sponsorship &amp; Advertising</div>
+        <div class="desc">As the ecosystem grows, stadiums will become prime real estate for in‑game advertising banners. Owners receive a share of the ad revenue generated by their specific venue, tied directly to foot traffic and match volume.</div>
+      </div>
+      <div class="earn-item">
+        <div class="title">📈 Scarcity‑Driven Demand</div>
+        <div class="desc">With only 1,000 stadiums and potentially millions of players, the demand for premium venues will naturally outpace supply. Owners can set competitive rental prices, and the value of the asset itself is anchored to its utility and historical position in the game world.</div>
+      </div>
+    </div>
+
+    <p style="font-size:0.85rem; color:#ffaaaa; margin-top:0.5rem;">Ownership is recorded on the blockchain. These earning mechanisms are designed to be sustainable, game‑native, and accessible to any stadium holder.</p>
+  </div>
+</div>
+
+<!-- 3. RENTAL, TRAINING, EARNINGS & TRANSFERS -->
+<div id="rental" class="spread">
+  <div class="left">
+    <div class="label">🏠 RENTAL & TRAINING</div>
+    <h2>Earn <span class="highlight">Passively</span> & Build Your Avatar</h2>
+    <p><strong>🏠 Rental system – earn even when you're not playing:</strong> Own a team? Rent it out for a fee in $FOOT. The renter controls your team in PvP and tournaments. When the renter wins prize money, it's split <strong>50/50</strong> between the renter and the team's players. The owner already got paid – no extra split.</p>
+    <p><strong>🧠 Train player – you are the player:</strong> Every time you train your avatar (Speed, Shot, Power, Intelligence, Brilliance, Accuracy), you're building your digital football self. The stronger you become, the more managers will want to sign you.</p>
+    <p><strong>💰 How you earn – fair for everyone:</strong> When a manager wins a tournament: <strong>70%</strong> of the prize goes to all players signed to that team (shared equally). <strong>30%</strong> goes to the manager. In a PvP match with a rented team: the renter and the team players split winnings <strong>50/50</strong>.</p>
+    <p><strong>🔁 Buy and sell player:</strong> In Manager Mode, you can buy and sell player avatars on the market – just like real football transfers. This creates a living economy inside the game.</p>
+  </div>
+  <div class="right">
+    <div class="image-placeholder"><i class="fas fa-handshake"></i></div>
+  </div>
+</div>
+
+<!-- 4. TOURNAMENTS -->
+<div id="tournaments" class="spread">
+  <div class="left">
+    <div class="label">🏆 COMPETE &amp; CONQUER</div>
+    <h2>Managers Tournaments<br><span class="highlight">Climb the Ladder</span></h2>
+    <p>Four leagues await, each with increasing stakes and rewards:</p>
+    <ul style="list-style-type:'⚡ '; padding-left:1.2rem;">
+      <li><strong>$FOOT SURVIVAL</strong> – the entry level. Only top 3 advance.</li>
+      <li><strong>$FOOT MISSION LEAGUE</strong> – like the Premier League.</li>
+      <li><strong>$FOOT CLASSIC LEAGUE</strong> – like the Europa League.</li>
+      <li><strong>$FOOT ELITE LEAGUE</strong> – the Champions League. The ultimate prize.</li>
+    </ul>
+    <p><strong>Prize split:</strong> 70% to the players (you), 30% to the manager. Rent your team out and earn even when you’re away.</p>
+    <div class="stat-grid">
+      <div class="stat"><div class="number">4</div><div class="desc">league tiers</div></div>
+      <div class="stat"><div class="number">100k+</div><div class="desc">$FOOT prize pools</div></div>
+    </div>
+  </div>
+  <div class="right">
+    <div class="image-placeholder"><i class="fas fa-trophy"></i></div>
+  </div>
+</div>
+
+<!-- 5. PVP ARENA -->
+<div id="pvp" class="spread">
+  <div class="left">
+    <div class="image-placeholder"><i class="fas fa-gamepad"></i></div>
+  </div>
+  <div class="right">
+    <div class="label">🎮 HEAD‑TO‑HEAD</div>
+    <h2>PvP Arena<br><span class="highlight">Winner Takes All</span></h2>
+    <p>Challenge any manager in real‑time. Your trained attributes — Speed, Shoot, Power, Intelligence — decide the outcome. Wager $FOOT, prove your skill, and claim the pot.</p>
+    <div class="stat-grid">
+      <div class="stat"><div class="number">6</div><div class="desc">trainable attributes</div></div>
+      <div class="stat"><div class="number">100%</div><div class="desc">of pot goes to winner</div></div>
+    </div>
+    <p><strong>Leaderboards:</strong> Climb the ranks and earn exclusive profile badges. The Arena opens with the game launch.</p>
+  </div>
+</div>
+
+<!-- 6. STAKING -->
+<div id="staking" class="spread">
+  <div class="left">
+    <div class="label">🔒 PASSIVE INCOME</div>
+    <h2>Stake $FOOT<br><span class="highlight">Earn While You Sleep</span></h2>
+    <p>Lock your tokens for a fixed period and earn up to <strong>15% APY</strong>. Longer commitments = higher rewards.</p>
+    <p><strong>Round‑Robin Pools:</strong> Team up with friends, pool your tokens, and take turns receiving the full yield. Fair, predictable, and community‑driven.</p>
+    <div class="stat-grid">
+      <div class="stat"><div class="number">15%</div><div class="desc">max APY</div></div>
+      <div class="stat"><div class="number">Flex</div><div class="desc">lock‑up periods</div></div>
+    </div>
+  </div>
+  <div class="right">
+    <div class="image-placeholder"><i class="fas fa-link"></i></div>
+  </div>
+</div>
+
+<!-- 7. VIRTUAL CARD -->
+<div id="card" class="spread">
+  <div class="left">
+    <div class="image-placeholder"><i class="fas fa-credit-card"></i></div>
+  </div>
+  <div class="right">
+    <div class="label">💳 REAL‑WORLD UTILITY</div>
+    <h2>$FOOT Virtual Card<br><span class="highlight">Spend Everywhere</span></h2>
+    <p>A virtual debit card that lives inside the METAFOOT app. Top up with $FOOT and spend it at <strong>physical METAFOOT stores</strong> (coming soon) — or use the card details for any online purchase.</p>
+    <p>No third‑party networks. No middlemen. Just pure $FOOT utility.</p>
+    <div class="stat-grid">
+      <div class="stat"><div class="number">0</div><div class="desc">fees for ecosystem transactions</div></div>
+      <div class="stat"><div class="number">🌍</div><div class="desc">global spending</div></div>
+    </div>
+  </div>
+</div>
+
+<!-- 8. ACADEMY, KNOWLEDGE CHALLENGE & THE GAME -->
+<div id="academy" class="spread">
+  <div class="left">
+    <div class="label">⚽ ACADEMY & THE GAME</div>
+    <h2>Real Impact & The <span class="highlight">Ultimate Game</span></h2>
+    <p><strong>🧠 $FOOT knowledge challenge:</strong> Prove you're a true fan. We'll run quiz challenges based on what happens in our leagues. Pay attention and earn extra $FOOT by answering correctly – rewarding smart players, not just grinders.</p>
+    <p><strong>⚽ $FOOT Football Academy:</strong> We're not just digital. We'll find real-life underground football talent and train them for free. When a professional club signs one of our players, we take a cut – that revenue flows back into the ecosystem, increasing the value of $FOOT. You're helping discover future stars while you mine.</p>
+    <p><strong>🎮 METAFOOT – the game itself:</strong> METAFOOT is the name of our football manager game. $FOOT is the currency that powers everything. We're building a realistic, immersive manager game – first on <strong>mobile (Unity)</strong>, later on <strong>PC (Unreal Engine)</strong>. It will be unlike anything you've played before.</p>
+    <p><strong>🔥 What this means for you, the miner:</strong> You're not just clicking a button. You're becoming a founding member of a football metaverse with real earning potential, a fair transparent economy, real-world utility (virtual card, academy), and a game that will evolve and grow for years. The mining phase is your head start. Train your avatar now. Stack your $FOOT. When the full ecosystem launches, you'll be ready to play, earn, and dominate.</p>
+  </div>
+  <div class="right">
+    <div class="image-placeholder"><i class="fas fa-graduation-cap"></i></div>
+  </div>
+</div>
+
+<!-- ECONOMY SUMMARY -->
+<div class="spread full visible" style="opacity:1; transform: translateY(0); margin-top:0; max-width:900px;">
+  <div class="left">
+    <div class="label">⚡ THE ENGINE</div>
+    <h2>How the Economy <span class="highlight">Flows</span></h2>
+    <p style="max-width:700px; margin:0 auto 1.5rem auto;">
+      <strong>Miners</strong> claim daily rewards → <strong>Training</strong> burns $FOOT to upgrade attributes → <strong>Managers</strong> sign players &amp; enter tournaments → <strong>70%</strong> of prize money flows to players → <strong>Renters</strong> pay fees to team owners → <strong>Stakers</strong> earn yield → <strong>Virtual Card</strong> spends $FOOT in the real world.
+    </p>
+    <div style="display: flex; flex-wrap: wrap; gap: 1rem; justify-content: center;">
+      <span style="background:#1a1a1a; padding:0.3rem 1.2rem; border-radius:40px; border:1px solid #ff5555;">300M Airdrop Pool</span>
+      <span style="background:#1a1a1a; padding:0.3rem 1.2rem; border-radius:40px; border:1px solid #ff5555;">500M Total Supply</span>
+    </div>
+  </div>
+</div>
+
+<div class="footer">
+  <p><strong>METAFOOT</strong> · The Football Metaverse · <span style="color:#ff5555;">⚡</span> Powered by its own Layer-1 blockchain</p>
+</div>
+
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+
+<script>
+  const spreads = document.querySelectorAll('.spread:not(.visible)');
+  const observer = new IntersectionObserver((entries) => {
+    entries.forEach(entry => {
+      if (entry.isIntersecting) {
+        entry.target.classList.add('visible');
+      }
+    });
+  }, { threshold: 0.18, rootMargin: '0px 0px -40px 0px' });
+  spreads.forEach(s => observer.observe(s));
+
+  document.querySelectorAll('.toc-item').forEach(item => {
+    item.addEventListener('click', () => {
+      const targetId = item.dataset.target;
+      const el = document.getElementById(targetId);
+      if (el) {
+        el.scrollIntoView({ behavior: 'smooth', block: 'start' });
+        if (!el.classList.contains('visible')) {
+          el.classList.add('visible');
+        }
+      }
+    });
+  });
+
+  const header = document.querySelector('.mag-header');
+  window.addEventListener('scroll', () => {
+    if (window.scrollY > 100) {
+      header.style.background = 'rgba(10,10,15,0.92)';
+      header.style.borderBottomColor = 'rgba(255,50,50,0.6)';
+    } else {
+      header.style.background = 'rgba(10,10,15,0.75)';
+      header.style.borderBottomColor = 'rgba(255,50,50,0.3)';
+    }
+  });
+</script>
+
+</body>
+</html>
